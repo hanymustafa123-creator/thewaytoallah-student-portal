@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Way To Allah Academy - Arabic Lesson & Quiz</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;600;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #0d1b2e;
+            --gold: #c9a84c;
+            --light-gold: #e8d69f;
+            --bg-color: #f4f7f6;
+            --white: #ffffff;
+            --text-dark: #222222;
+            --text-grey: #666666;
+            --correct: #28a745;
+            --wrong: #dc3545;
+            --primary-accent: #1a3152;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+
+        /* Typography */
+        h1, h2, h3 { font-family: 'Amiri', serif; color: var(--navy); }
+        .arabic-text { font-family: 'Scheherazade New', serif; font-size: 2.2rem; color: var(--navy); line-height: 1.4; direction: rtl; }
+        .english-translation { font-size: 1.1rem; color: var(--text-grey); font-style: italic; font-family: sans-serif; direction: ltr; display: inline-block; }
+
+        /* Header */
+        header {
+            background-color: var(--navy);
+            color: var(--gold);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+            background-color: var(--navy);
+        }
+
+        .academy-name h1 {
+            color: var(--gold);
+            font-size: 1.3rem;
+            margin: 0;
+        }
+        
+        .tagline {
+            color: var(--white);
+            font-size: 0.8rem;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .score-tracker, .timer-display {
+            background-color: var(--gold);
+            color: var(--navy);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1rem;
+            display: none;
+        }
+        
+        .timer-display {
+            background-color: var(--white);
+            border: 2px solid var(--gold);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .page-section {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: none;
+            border-top: 5px solid var(--gold);
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Inputs & Buttons */
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-family: 'Cairo', sans-serif;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: var(--gold);
+            outline: none;
+        }
+
+        .btn {
+            background-color: var(--navy);
+            color: var(--gold);
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-accent);
+            transform: translateY(-2px);
+        }
+
+        .btn-gold {
+            background-color: var(--gold);
+            color: var(--navy);
+        }
+        
+        .btn-gold:hover {
+            background-color: #b59540;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Interactive Flip Cards for Vocab */
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .flip-card {
+            background-color: transparent;
+            height: 180px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 12px;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border: 2px solid var(--light-gold);
+        }
+
+        .flip-card-front {
+            background-color: #fafafa;
+            color: var(--navy);
+        }
+
+        .flip-card-back {
+            background-color: var(--navy);
+            color: var(--gold);
+            transform: rotateY(180deg);
+        }
+        
+        .flip-card-back .english-translation {
+            color: white;
+        }
+
+        .instruction-text {
+            text-align: center;
+            color: var(--text-grey);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        /* Interactive Dialogue Chat */
+        .chat-container {
+            background: #eef2f5;
+            border-radius: 15px;
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border: 1px solid #dcdcdc;
+        }
+
+        .chat-message {
+            max-width: 80%;
+            padding: 15px;
+            border-radius: 15px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .speaker-name {
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--text-grey);
+        }
+
+        .chat-ali {
+            align-self: flex-start;
+            background-color: var(--white);
+            border-bottom-right-radius: 0;
+            border-left: 4px solid var(--navy);
+        }
+
+        .chat-ammar {
+            align-self: flex-end;
+            background-color: var(--light-gold);
+            border-bottom-left-radius: 0;
+            border-right: 4px solid var(--gold);
+            text-align: right;
+        }
+        
+        .chat-omar {
+             align-self: flex-start;
+            background-color: var(--white);
+            border-bottom-right-radius: 0;
+            border-left: 4px solid var(--navy);
+        }
+        
+        .chat-othman {
+            align-self: flex-end;
+            background-color: var(--light-gold);
+            border-bottom-left-radius: 0;
+            border-right: 4px solid var(--gold);
+            text-align: right;
+        }
+
+        /* Quiz Styles */
+        .question-block {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+            border-right: 4px solid var(--navy);
+        }
+        
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--navy);
+        }
+
+        /* MCQ Options */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+        }
+
+        .option-btn {
+            background: var(--bg-color);
+            border: 2px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .option-btn.arabic-text { font-size: 1.8rem; }
+        .option-btn:hover:not(:disabled) { border-color: var(--gold); background: #fff; }
+        .option-btn.correct { background-color: var(--correct) !important; color: white !important; border-color: var(--correct) !important; }
+        .option-btn.wrong { background-color: var(--wrong) !important; color: white !important; border-color: var(--wrong) !important; }
+
+        /* True/False Options */
+        .tf-grid {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .tf-btn {
+            flex: 1;
+            max-width: 200px;
+            font-size: 1.5rem;
+            padding: 15px;
+        }
+        .explanation-box {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            display: none;
+            border-right: 3px solid var(--navy);
+        }
+
+        /* Matching Options */
+        .matching-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+        }
+        .matching-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .match-item {
+            padding: 15px;
+            background: var(--bg-color);
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            user-select: none;
+            transition: all 0.2s;
+        }
+        .match-item.selected {
+            border-color: var(--gold);
+            background: var(--light-gold);
+            color: var(--navy);
+            font-weight: bold;
+        }
+        .match-item.matched {
+            background-color: var(--correct);
+            color: white;
+            border-color: var(--correct);
+            cursor: default;
+        }
+        .match-item.error {
+            background-color: var(--wrong);
+            color: white;
+            border-color: var(--wrong);
+            animation: shake 0.4s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Sentence Ordering */
+        .ordering-area {
+            min-height: 60px;
+            padding: 15px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: flex-start;
+            direction: rtl;
+        }
+        .word-chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            direction: rtl;
+        }
+        .word-chip {
+            padding: 10px 20px;
+            background: var(--white);
+            border: 1px solid var(--navy);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            user-select: none;
+            transition: all 0.2s;
+        }
+        .word-chip:hover {
+            background: var(--navy);
+            color: var(--white);
+        }
+        .ordering-feedback { margin-top: 10px; font-weight: bold; display: none; }
+
+        /* Bottom Navigation & Progress */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--white);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .progress-container {
+            flex-grow: 1;
+            margin: 0 20px;
+            height: 10px;
+            background: #eee;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gold);
+            width: 20%; 
+            transition: width 0.4s ease;
+        }
+
+        /* WhatsApp Report Section */
+        .report-section {
+            text-align: center;
+            margin-top: 30px;
+            display: none;
+            padding: 30px;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 2px solid var(--gold);
+        }
+
+        .wa-btn {
+            background-color: #25D366;
+            color: white;
+            font-size: 1.2rem;
+            padding: 15px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+            transition: transform 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .wa-btn:hover { transform: scale(1.05); }
+        .wa-btn svg { width: 24px; height: 24px; fill: currentColor; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-brand">
+            <img src="https://i.postimg.cc/brVD4yVm/logo-jpeg.jpg" alt="Academy Logo" class="logo">
+            <div class="academy-name">
+                <h1>The Way To Allah Academy</h1>
+                <p class="tagline">The Gateway to Guidance</p>
+            </div>
+        </div>
+        <div class="status-bar">
+            <div class="timer-display" id="timerDisplay">10:00</div>
+            <div class="score-tracker" id="scoreTracker">النتيجة: 0 / 15</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Page 1: Registration & Introduction -->
+        <div class="page-section active" id="page1">
+            <h2 style="text-align: center; margin-bottom: 20px;">مرحباً بك في درس اللغة العربية</h2>
+            <p style="text-align: center; margin-bottom: 30px; color: var(--text-grey);">Welcome to the Arabic lesson. In this module, you will learn about family members and related vocabulary. Please enter your name to begin.</p>
+            
+            <div style="max-width: 400px; margin: 0 auto; text-align: center;">
+                <label for="studentName" style="display: block; text-align: right; margin-bottom: 10px; font-weight: bold;">اسم الطالب (Student Name):</label>
+                <input type="text" id="studentName" placeholder="أدخل اسمك هنا...">
+                <button class="btn btn-gold" onclick="startCourse()" style="width: 100%;">ابدأ الدرس (Start Lesson)</button>
+            </div>
+        </div>
+
+        <!-- Page 2: Vocabulary - Interactive Cards -->
+        <div class="page-section" id="page2">
+            <h2>المُفْرَدَات (Vocabulary)</h2>
+            <p class="english-translation" style="margin-bottom: 10px; display:block;">Click on the cards to flip them and learn the meanings.</p>
+            <p class="instruction-text">اِضْغَطْ عَلَى البِطَاقَة لِمَعْرِفَةِ المَعْنَى</p>
+            
+            <div class="vocab-grid" id="vocabGrid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Page 3: Dialogue 1 -->
+        <div class="page-section" id="page3">
+            <h2>الحِوَارُ الأَوَّلُ (The First Dialogue)</h2>
+            <p class="english-translation" style="margin-bottom: 20px; display:block;">Read the conversation between Ali and Ammar about Ali's family picture.</p>
+            
+            <div class="chat-container" id="dialogue1">
+                <!-- Chat messages -->
+                <div class="chat-message chat-ali">
+                    <div class="speaker-name">عَلِيّ (Ali)</div>
+                    <div class="arabic-text">السَّلَامُ عَلَيْكُمْ .</div>
+                    <div class="english-translation">Peace be upon you.</div>
+                </div>
+                <div class="chat-message chat-ammar">
+                    <div class="speaker-name">عَمَّار (Ammar)</div>
+                    <div class="arabic-text">وَعَلَيْكُمُ السَّلَام .</div>
+                    <div class="english-translation">And upon you be peace.</div>
+                </div>
+                
+                <div class="chat-message chat-ali">
+                    <div class="speaker-name">عَلِيّ (Ali)</div>
+                    <div class="arabic-text">هَذِهِ صُورَةُ أُسْرَتِي .</div>
+                    <div class="english-translation">This is a picture of my family.</div>
+                </div>
+                <div class="chat-message chat-ammar">
+                    <div class="speaker-name">عَمَّار (Ammar)</div>
+                    <div class="arabic-text">مَا شَاءَ الله ! مَنْ هَذَا ؟</div>
+                    <div class="english-translation">Mashallah! Who is this (male)?</div>
+                </div>
+
+                <div class="chat-message chat-ali">
+                    <div class="speaker-name">عَلِيّ (Ali)</div>
+                    <div class="arabic-text">هَذَا وَالِدِي عَدْنَان وَهُوَ مُهَنْدِس .</div>
+                    <div class="english-translation">This is my father Adnan, and he is an engineer.</div>
+                </div>
+                <div class="chat-message chat-ammar">
+                    <div class="speaker-name">عَمَّار (Ammar)</div>
+                    <div class="arabic-text">وَمَنْ هَذِهِ ؟</div>
+                    <div class="english-translation">And who is this (female)?</div>
+                </div>
+
+                <div class="chat-message chat-ali">
+                    <div class="speaker-name">عَلِيّ (Ali)</div>
+                    <div class="arabic-text">هَذِهِ وَالِدَتِي سَعِيدَة وَهِيَ طَبِيبَة .</div>
+                    <div class="english-translation">This is my mother Sa'eedah, and she is a doctor.</div>
+                </div>
+                 <div class="chat-message chat-ammar">
+                    <div class="speaker-name">عَمَّار (Ammar)</div>
+                    <div class="arabic-text">وَمَنْ هَذَا ؟</div>
+                    <div class="english-translation">And who is this (male)?</div>
+                </div>
+
+                <div class="chat-message chat-ali">
+                    <div class="speaker-name">عَلِيّ (Ali)</div>
+                    <div class="arabic-text">هَذَا أَخِي عِيسَى وَهُوَ طَالِب .</div>
+                    <div class="english-translation">This is my brother Isa, and he is a student.</div>
+                </div>
+                <div class="chat-message chat-ammar">
+                    <div class="speaker-name">عَمَّار (Ammar)</div>
+                    <div class="arabic-text">وَمَنْ هَذِهِ ؟</div>
+                    <div class="english-translation">And who is this (female)?</div>
+                </div>
+
+                 <div class="chat-message chat-ali">
+                    <div class="speaker-name">عَلِيّ (Ali)</div>
+                    <div class="arabic-text">هَذِهِ أُخْتِي عَبْلَة وَهِيَ مُعَلِّمَة . وَهَذَا جَدِّي . وَهَذِهِ جَدَّتِي .</div>
+                    <div class="english-translation">This is my sister Abla, and she is a teacher. And this is my grandfather. And this is my grandmother.</div>
+                </div>
+                <div class="chat-message chat-ammar">
+                    <div class="speaker-name">عَمَّار (Ammar)</div>
+                    <div class="arabic-text">مَا شَاءَ الله !</div>
+                    <div class="english-translation">Mashallah!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 4: Dialogue 2 (Prophet's Family Tree) -->
+        <div class="page-section" id="page4">
+            <h2>الحِوَارُ الثَّانِي (The Second Dialogue)</h2>
+            <p class="english-translation" style="margin-bottom: 20px; display:block;">Read the conversation between Omar and Othman about the family tree of the Prophet Muhammad (PBUH).</p>
+            
+             <div class="chat-container" id="dialogue2">
+                <!-- Chat messages -->
+                <div class="chat-message chat-omar">
+                    <div class="speaker-name">عُمَر (Omar)</div>
+                    <div class="arabic-text">هَلْ هَذِهِ شَجَرَةٌ ؟</div>
+                    <div class="english-translation">Is this a tree?</div>
+                </div>
+                <div class="chat-message chat-othman">
+                    <div class="speaker-name">عُثْمَان (Othman)</div>
+                    <div class="arabic-text">نَعَمْ ، هَذِهِ أُسْرَةُ الرَّسُولِ ، صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ .</div>
+                    <div class="english-translation">Yes, this is the family of the Messenger, peace be upon him.</div>
+                </div>
+                
+                <div class="chat-message chat-omar">
+                    <div class="speaker-name">عُمَر (Omar)</div>
+                    <div class="arabic-text">صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ .</div>
+                    <div class="english-translation">Peace be upon him.</div>
+                </div>
+                <div class="chat-message chat-othman">
+                    <div class="speaker-name">عُثْمَان (Othman)</div>
+                    <div class="arabic-text">هَذَا وَالِدُهُ عَبْدُ الله .</div>
+                    <div class="english-translation">This is his father Abdullah.</div>
+                </div>
+
+                <div class="chat-message chat-omar">
+                    <div class="speaker-name">عُمَر (Omar)</div>
+                    <div class="arabic-text">وَهَذِهِ وَالِدَتُهُ آمِنَة .</div>
+                    <div class="english-translation">And this is his mother Aminah.</div>
+                </div>
+                <div class="chat-message chat-othman">
+                    <div class="speaker-name">عُثْمَان (Othman)</div>
+                    <div class="arabic-text">وَهَذَا جَدُّهُ عَبْدُ المُطَّلِب .</div>
+                    <div class="english-translation">And this is his grandfather Abdul Muttalib.</div>
+                </div>
+
+                 <div class="chat-message chat-omar">
+                    <div class="speaker-name">عُمَر (Omar)</div>
+                    <div class="arabic-text">وَهَذَا عَمُّهُ العَبَّاس .</div>
+                    <div class="english-translation">And this is his paternal uncle Al-Abbas.</div>
+                </div>
+                 <div class="chat-message chat-othman">
+                    <div class="speaker-name">عُثْمَان (Othman)</div>
+                    <div class="arabic-text">وَهَذَا عَمُّهُ حَمْزَة .</div>
+                    <div class="english-translation">And this is his paternal uncle Hamzah.</div>
+                </div>
+                
+                 <div class="chat-message chat-omar">
+                    <div class="speaker-name">عُمَر (Omar)</div>
+                    <div class="arabic-text">وَهَذَا عَمُّهُ أَبُو طَالِب .</div>
+                    <div class="english-translation">And this is his paternal uncle Abu Talib.</div>
+                </div>
+                 <div class="chat-message chat-othman">
+                    <div class="speaker-name">عُثْمَان (Othman)</div>
+                    <div class="arabic-text">وَهَذِهِ عَمَّتُهُ صَفِيَّة .</div>
+                    <div class="english-translation">And this is his paternal aunt Safiyyah.</div>
+                </div>
+
+                 <div class="chat-message chat-omar">
+                    <div class="speaker-name">عُمَر (Omar)</div>
+                    <div class="arabic-text">وَهَذَا اِبْنُهُ القَاسِم .</div>
+                    <div class="english-translation">And this is his son Al-Qasim.</div>
+                </div>
+                 <div class="chat-message chat-othman">
+                    <div class="speaker-name">عُثْمَان (Othman)</div>
+                    <div class="arabic-text">وَهَذَا اِبْنُهُ عَبْدُ الله .</div>
+                    <div class="english-translation">And this is his son Abdullah.</div>
+                </div>
+                
+                <div class="chat-message chat-omar">
+                    <div class="speaker-name">عُمَر (Omar)</div>
+                    <div class="arabic-text">وَهَذَا اِبْنُهُ إِبْرَاهِيم .</div>
+                    <div class="english-translation">And this is his son Ibrahim.</div>
+                </div>
+                 <div class="chat-message chat-othman">
+                    <div class="speaker-name">عُثْمَان (Othman)</div>
+                    <div class="arabic-text">وَهَذِهِ اِبْنَتُهُ فَاطِمَة .</div>
+                    <div class="english-translation">And this is his daughter Fatimah.</div>
+                </div>
+                
+                 <div class="chat-message chat-omar">
+                    <div class="speaker-name">عُمَر (Omar)</div>
+                    <div class="arabic-text">وَهَذِهِ اِبْنَتُهُ رُقَيَّة .</div>
+                    <div class="english-translation">And this is his daughter Ruqayyah.</div>
+                </div>
+                 <div class="chat-message chat-othman">
+                    <div class="speaker-name">عُثْمَان (Othman)</div>
+                    <div class="arabic-text">وَهَذِهِ اِبْنَتُهُ زَيْنَب .</div>
+                    <div class="english-translation">And this is his daughter Zaynab.</div>
+                </div>
+                
+                <div class="chat-message chat-omar">
+                    <div class="speaker-name">عُمَر (Omar)</div>
+                    <div class="arabic-text">وَهَذِهِ اِبْنَتُهُ أُمُّ كُلْثُوم .</div>
+                    <div class="english-translation">And this is his daughter Umm Kulthum.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 5: The Interactive Quiz -->
+        <div class="page-section" id="page5">
+            <h2>الِاخْتِبَار الشَّامِل (Comprehensive Quiz)</h2>
+            <p class="english-translation" style="margin-bottom: 20px;">Answer all 15 questions. The timer is running!</p>
+            
+            <div id="quizContainer">
+                <!-- Questions injected via JS -->
+            </div>
+
+            <div class="report-section" id="reportSection">
+                <h3 style="margin-bottom: 15px;">اكتمل الاختبار! (Quiz Completed!)</h3>
+                <p>أحسنت يا <span id="displayStudentNameResult" style="font-weight:bold; color:var(--navy);"></span>!</p>
+                <p style="font-size: 1.5rem; font-weight: bold; margin: 15px 0;">النتيجة النهائية: <span id="finalScoreDisplay">0</span> / 15</p>
+                
+                <button class="wa-btn" onclick="sendWhatsAppReport()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                        <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-23.2-115-65.1-157zM223.9 413.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 334.3l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.4-186.6 184.4zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
+                    </svg>
+                    إرسال التقرير للمعلم (Send Report)
+                </button>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-grey);">Send your results via WhatsApp</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="btn" id="nextBtn" onclick="nextPage()" style="display: none;">التالي (Next) &raquo;</button>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <button class="btn" id="prevBtn" onclick="prevPage()" style="display: none;">&laquo; السابق (Previous)</button>
+    </div>
+
+    <script>
+        // State Variables
+        let studentName = '';
+        let currentScore = 0;
+        const totalQuestions = 15;
+        let currentPage = 1;
+        const totalPages = 5;
+        let answersGiven = {};
+        
+        // Timer Variables
+        let timerInterval;
+        let timeLeft = 600; // 10 minutes in seconds
+        
+        // Vocabulary Data
+        const vocabList = [
+            { ar: 'أُسْرَةٌ', en: 'Family' },
+            { ar: 'صُورَةٌ', en: 'Picture' },
+            { ar: 'وَالِدٌ', en: 'Father' },
+            { ar: 'وَالِدَةٌ', en: 'Mother' },
+            { ar: 'أَخٌ', en: 'Brother' },
+            { ar: 'أُخْتٌ', en: 'Sister' },
+            { ar: 'جَدٌّ', en: 'Grandfather' },
+            { ar: 'جَدَّةٌ', en: 'Grandmother' },
+            { ar: 'عَمٌّ', en: 'Paternal Uncle' },
+            { ar: 'عَمَّةٌ', en: 'Paternal Aunt' },
+            { ar: 'اِبْنٌ', en: 'Son' },
+            { ar: 'اِبْنَةٌ', en: 'Daughter' },
+            { ar: 'شَجَرَةٌ', en: 'Tree' },
+            { ar: 'مُعَلِّمَةٌ', en: 'Teacher (f)' },
+            { ar: 'مُهَنْدِسٌ', en: 'Engineer (m)' },
+            { ar: 'طَبِيبَةٌ', en: 'Doctor (f)' },
+            { ar: 'طَالِبٌ', en: 'Student (m)' }
+        ];
+
+        const quizQuestions = [
+            // --- Section 1: Vocabulary & Grammar ---
+            {
+                type: 'mcq',
+                q: 'What is the correct Arabic translation for "Family"?',
+                options: [
+                    { text: 'شَجَرَةٌ', isCorrect: false },
+                    { text: 'صُورَةٌ', isCorrect: false },
+                    { text: 'أُسْرَةٌ', isCorrect: true },
+                    { text: 'أَخٌ', isCorrect: false }
+                ]
+            },
+            {
+                type: 'mcq',
+                q: 'Identify the word for "Grandfather":',
+                options: [
+                    { text: 'عَمٌّ', isCorrect: false },
+                    { text: 'جَدٌّ', isCorrect: true },
+                    { text: 'وَالِدٌ', isCorrect: false },
+                    { text: 'اِبْنٌ', isCorrect: false }
+                ]
+            },
+            {
+                type: 'mcq',
+                q: 'What profession is "مُهَنْدِسٌ"?',
+                options: [
+                    { text: 'Doctor', isCorrect: false },
+                    { text: 'Teacher', isCorrect: false },
+                    { text: 'Student', isCorrect: false },
+                    { text: 'Engineer', isCorrect: true }
+                ]
+            },
+            {
+                type: 'tf',
+                q: 'True or False: "شَجَرَةٌ" means "Picture".',
+                isTrue: false,
+                explanation: 'False. "شَجَرَةٌ" means Tree. "صُورَةٌ" means Picture.'
+            },
+            {
+                type: 'tf',
+                q: 'True or False: "عَمَّةٌ" means Maternal Aunt.',
+                isTrue: false,
+                explanation: 'False. "عَمَّةٌ" refers specifically to a Paternal Aunt (father\'s sister).'
+            },
+            {
+                type: 'tf',
+                q: 'True or False: In Arabic, "هَذَا" is used for males (this - male) and "هَذِهِ" is used for females (this - female).',
+                isTrue: true,
+                explanation: 'True. For example: هَذَا وَالِدِي (This is my father) and هَذِهِ وَالِدَتِي (This is my mother).'
+            },
+            {
+                type: 'tf',
+                q: 'True or False: The phrase "مَا شَاءَ الله" is often used to express appreciation and means "What Allah willed".',
+                isTrue: true,
+                explanation: 'True. It is a common expression of joy and protection against the evil eye.'
+            },
+            {
+                type: 'matching',
+                q: 'Match the Arabic word to its English translation:',
+                pairs: [
+                    { ar: 'طَالِبٌ', en: 'Student' },
+                    { ar: 'وَالِدَةٌ', en: 'Mother' },
+                    { ar: 'أُخْتٌ', en: 'Sister' }
+                ]
+            },
+            {
+                type: 'ordering',
+                q: 'Arrange the words to form: "Who is this? (referring to a male)"',
+                words: ['هَذَا', '؟', 'مَنْ'],
+                correctOrder: ['مَنْ', 'هَذَا', '؟'] 
+            },
+
+            // --- Section 2: Dialogue 1 (Ali's Family) ---
+            {
+                type: 'mcq',
+                q: 'According to the dialogue, what is the profession of Sa\'eedah (سَعِيدَة)?',
+                options: [
+                    { text: 'مُعَلِّمَة (Teacher)', isCorrect: false },
+                    { text: 'طَبِيبَة (Doctor)', isCorrect: true },
+                    { text: 'مُهَنْدِسَة (Engineer)', isCorrect: false },
+                    { text: 'طَالِبَة (Student)', isCorrect: false }
+                ]
+            },
+            {
+                type: 'matching',
+                q: 'Match the family relation to the name (Based on Dialogue 1):',
+                pairs: [
+                    { ar: 'الأَخ', en: 'عِيسَى' },
+                    { ar: 'الأُخْت', en: 'عَبْلَة' },
+                    { ar: 'الأَب (الوَالِد)', en: 'عَدْنَان' }
+                ]
+            },
+            {
+                type: 'ordering',
+                q: 'Arrange the words to form: "This is a picture of my family."',
+                words: ['هَذِهِ', 'أُسْرَتِي', 'صُورَةُ'],
+                correctOrder: ['هَذِهِ', 'صُورَةُ', 'أُسْرَتِي'] 
+            },
+
+            // --- Section 3: Dialogue 2 (The Prophet's Family) ---
+            {
+                type: 'mcq',
+                q: 'Who is the paternal uncle (عَمّ) of the Prophet (PBUH) mentioned in the dialogue?',
+                options: [
+                    { text: 'عَبْدُ المُطَّلِب', isCorrect: false },
+                    { text: 'إِبْرَاهِيم', isCorrect: false },
+                    { text: 'حَمْزَة', isCorrect: true },
+                    { text: 'عَبْدُ الله', isCorrect: false }
+                ]
+            },
+            {
+                type: 'tf',
+                q: 'True or False: Fatimah (فَاطِمَة) is the sister of the Prophet (PBUH).',
+                isTrue: false,
+                explanation: 'False. According to the dialogue, Fatimah is his daughter (اِبْنَتُهُ).'
+            },
+            {
+                type: 'ordering',
+                q: 'Arrange the words to form: "Yes, this is a tree."',
+                words: ['شَجَرَةٌ', 'هَذِهِ', 'نَعَمْ', '،'],
+                correctOrder: ['نَعَمْ', '،', 'هَذِهِ', 'شَجَرَةٌ']
+            }
+        ];
+
+        window.onload = function() {
+            renderVocabulary();
+            renderQuiz();
+            updateNavigation();
+        }
+
+        function renderVocabulary() {
+            const grid = document.getElementById('vocabGrid');
+            vocabList.forEach(word => {
+                const card = document.createElement('div');
+                card.className = 'flip-card';
+                card.innerHTML = `
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="arabic-text">${word.ar}</div>
+                        </div>
+                        <div class="flip-card-back">
+                            <div class="arabic-text">${word.ar}</div>
+                            <div class="english-translation">${word.en}</div>
+                        </div>
+                    </div>
+                `;
+                card.onclick = function() { this.classList.toggle('flipped'); };
+                grid.appendChild(card);
+            });
+        }
+
+        function startCourse() {
+            const nameInput = document.getElementById('studentName').value.trim();
+            if (nameInput === '') {
+                alert('الرجاء إدخال اسمك أولاً (Please enter your name first).');
+                return;
+            }
+            studentName = nameInput;
+            document.getElementById('displayStudentNameResult').innerText = studentName;
+            nextPage();
+        }
+
+        function startTimer() {
+            document.getElementById('timerDisplay').style.display = 'block';
+            document.getElementById('scoreTracker').style.display = 'block';
+            
+            // Only start if not already running
+            if(timerInterval) return;
+
+            timerInterval = setInterval(() => {
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    forceSubmitQuiz();
+                } else {
+                    timeLeft--;
+                    updateTimerDisplay();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timerDisplay').innerText = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if(timeLeft <= 60) {
+                document.getElementById('timerDisplay').style.color = 'red';
+                document.getElementById('timerDisplay').style.borderColor = 'red';
+            }
+        }
+
+        function forceSubmitQuiz() {
+            alert('انتهى الوقت! (Time is up!)');
+            document.getElementById('reportSection').style.display = 'block';
+            // Disable remaining interactions
+            const allBtns = document.querySelectorAll('#quizContainer button, #quizContainer .match-item, #quizContainer .word-chip');
+            allBtns.forEach(btn => btn.disabled = true);
+        }
+
+        function showPage(pageNumber) {
+            document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('page' + pageNumber).classList.add('active');
+            
+            const progress = (pageNumber / totalPages) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            // Start timer when reaching quiz page
+            if(pageNumber === totalPages && !timerInterval) {
+                startTimer();
+            }
+
+            updateNavigation();
+            window.scrollTo(0,0);
+        }
+
+        function updateNavigation() {
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentPage === 1 && studentName === '') {
+                nextBtn.style.display = 'none';
+            } else if (currentPage < totalPages) {
+                nextBtn.style.display = 'block';
+            } else {
+                nextBtn.style.display = 'none';
+            }
+
+            const prevBtn = document.getElementById('prevBtn');
+            prevBtn.style.display = (currentPage > 1) ? 'block' : 'none';
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                showPage(currentPage);
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                showPage(currentPage);
+            }
+        }
+
+        function renderQuiz() {
+            const container = document.getElementById('quizContainer');
+            let html = '';
+
+            quizQuestions.forEach((qObj, index) => {
+                html += `<div class="question-block" id="qBlock_${index}">`;
+                html += `<div class="question-text">${index + 1}. ${qObj.q}</div>`;
+
+                if (qObj.type === 'mcq') {
+                    let optionsHtml = '';
+                    let shuffledOptions = [...qObj.options].sort(() => Math.random() - 0.5);
+                    shuffledOptions.forEach((opt) => {
+                        const isArabic = /[\u0600-\u06FF]/.test(opt.text);
+                        const btnClass = isArabic ? 'option-btn arabic-text' : 'option-btn';
+                        optionsHtml += `
+                            <button class="${btnClass}" 
+                                    onclick="handleMCQ(${index}, ${opt.isCorrect}, this)">
+                                ${opt.text}
+                            </button>
+                        `;
+                    });
+                    html += `<div class="options-grid">${optionsHtml}</div>`;
+                } 
+                else if (qObj.type === 'tf') {
+                    html += `
+                        <div class="tf-grid">
+                            <button class="btn btn-gold tf-btn" onclick="handleTF(${index}, true, this)">✅ True (صَحِيح)</button>
+                            <button class="btn btn-gold tf-btn" onclick="handleTF(${index}, false, this)">❌ False (خَطَأ)</button>
+                        </div>
+                        <div class="explanation-box" id="exp_${index}">${qObj.explanation}</div>
+                    `;
+                }
+                else if (qObj.type === 'matching') {
+                    let arItems = qObj.pairs.map(p => p.ar).sort(() => Math.random() - 0.5);
+                    let enItems = qObj.pairs.map(p => p.en).sort(() => Math.random() - 0.5);
+                    
+                    let arHtml = arItems.map((ar, i) => `<div class="match-item arabic-text" onclick="selectMatch(this, 'ar', ${index})" data-val="${ar}">${ar}</div>`).join('');
+                    let enHtml = enItems.map((en, i) => `<div class="match-item" onclick="selectMatch(this, 'en', ${index})" data-val="${en}">${en}</div>`).join('');
+
+                    html += `
+                        <div class="matching-container" id="matchContainer_${index}">
+                            <div class="matching-col">${arHtml}</div>
+                            <div class="matching-col">${enHtml}</div>
+                        </div>
+                    `;
+                }
+                else if (qObj.type === 'ordering') {
+                    let shuffledWords = [...qObj.words].sort(() => Math.random() - 0.5);
+                    let chipsHtml = shuffledWords.map(w => `<div class="word-chip arabic-text" onclick="moveChip(this, ${index})">${w}</div>`).join('');
+                    
+                    html += `
+                        <div class="ordering-area" id="orderArea_${index}"></div>
+                        <div class="word-chips-container" id="chipContainer_${index}">${chipsHtml}</div>
+                        <button class="btn btn-gold" onclick="checkOrder(${index})" id="checkOrderBtn_${index}">Check Answer</button>
+                        <div class="ordering-feedback" id="orderFeedback_${index}"></div>
+                    `;
+                }
+
+                html += `</div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function handleMCQ(qIndex, isCorrect, btnElement) {
+            if (answersGiven[qIndex] !== undefined) return;
+            answersGiven[qIndex] = isCorrect;
+            
+            const parent = btnElement.closest('.options-grid');
+            const allButtons = parent.querySelectorAll('button');
+
+            allButtons.forEach(btn => btn.disabled = true);
+            
+            if (isCorrect) {
+                btnElement.classList.add('correct');
+                incrementScore();
+            } else {
+                btnElement.classList.add('wrong');
+                // Highlight correct answer
+                quizQuestions[qIndex].options.forEach((opt, idx) => {
+                    if(opt.isCorrect) {
+                        // Find the button with this text and mark it green
+                        Array.from(allButtons).find(b => b.innerText.includes(opt.text)).classList.add('correct');
+                    }
+                });
+            }
+            checkQuizCompletion();
+        }
+
+        function handleTF(qIndex, userChoice, btnElement) {
+            if (answersGiven[qIndex] !== undefined) return;
+            
+            const qData = quizQuestions[qIndex];
+            const isCorrect = (userChoice === qData.isTrue);
+            answersGiven[qIndex] = isCorrect;
+
+            const parent = btnElement.closest('.tf-grid');
+            parent.querySelectorAll('button').forEach(btn => btn.disabled = true);
+
+            if (isCorrect) {
+                btnElement.style.backgroundColor = 'var(--correct)';
+                btnElement.style.color = 'white';
+                incrementScore();
+            } else {
+                btnElement.style.backgroundColor = 'var(--wrong)';
+                btnElement.style.color = 'white';
+            }
+
+            // Show explanation
+            document.getElementById(`exp_${qIndex}`).style.display = 'block';
+            checkQuizCompletion();
+        }
+
+        let activeMatch = { ar: null, en: null };
+        function selectMatch(element, type, qIndex) {
+            if(element.classList.contains('matched')) return;
+
+            const container = document.getElementById(`matchContainer_${qIndex}`);
+            
+            // Deselect previously selected of same type
+            if(activeMatch[type]) {
+                activeMatch[type].classList.remove('selected');
+            }
+            
+            element.classList.add('selected');
+            activeMatch[type] = element;
+
+            // If both types are selected, check match
+            if(activeMatch.ar && activeMatch.en) {
+                const arVal = activeMatch.ar.dataset.val;
+                const enVal = activeMatch.en.dataset.val;
+                
+                const qData = quizQuestions[qIndex];
+                const correctPair = qData.pairs.find(p => p.ar === arVal && p.en === enVal);
+
+                if(correctPair) {
+                    // Match Correct
+                    activeMatch.ar.classList.replace('selected', 'matched');
+                    activeMatch.en.classList.replace('selected', 'matched');
+                    
+                    // Check if all matched for this question
+                    const allMatched = container.querySelectorAll('.matched').length === (qData.pairs.length * 2);
+                    if(allMatched && answersGiven[qIndex] === undefined) {
+                        answersGiven[qIndex] = true;
+                        incrementScore();
+                        checkQuizCompletion();
+                    }
+                } else {
+                    // Match Wrong
+                    activeMatch.ar.classList.replace('selected', 'error');
+                    activeMatch.en.classList.replace('selected', 'error');
+                    
+                    setTimeout(() => {
+                        container.querySelectorAll('.error').forEach(el => {
+                            el.classList.remove('error');
+                            el.classList.remove('selected');
+                        });
+                    }, 500);
+                }
+                
+                // Reset active
+                activeMatch = { ar: null, en: null };
+            }
+        }
+
+        function moveChip(chip, qIndex) {
+            if(answersGiven[qIndex] !== undefined) return;
+
+            const orderArea = document.getElementById(`orderArea_${qIndex}`);
+            const chipContainer = document.getElementById(`chipContainer_${qIndex}`);
+
+            if(chip.parentElement === chipContainer) {
+                orderArea.appendChild(chip);
+            } else {
+                chipContainer.appendChild(chip);
+            }
+        }
+
+        function checkOrder(qIndex) {
+            if(answersGiven[qIndex] !== undefined) return;
+
+            const orderArea = document.getElementById(`orderArea_${qIndex}`);
+            const chips = orderArea.querySelectorAll('.word-chip');
+            const userOrder = Array.from(chips).map(c => c.innerText);
+            
+            const correctOrder = quizQuestions[qIndex].correctOrder;
+            const feedback = document.getElementById(`orderFeedback_${qIndex}`);
+            
+            // Check length first
+            if(userOrder.length !== correctOrder.length) {
+                feedback.innerText = "Please use all words.";
+                feedback.style.color = "var(--wrong)";
+                feedback.style.display = "block";
+                return;
+            }
+
+            let isCorrect = true;
+            for(let i=0; i < correctOrder.length; i++) {
+                if(userOrder[i] !== correctOrder[i]) {
+                    isCorrect = false; break;
+                }
+            }
+
+            answersGiven[qIndex] = isCorrect;
+            const btn = document.getElementById(`checkOrderBtn_${qIndex}`);
+            btn.disabled = true;
+
+            if(isCorrect) {
+                feedback.innerText = "Correct! (صَحِيح)";
+                feedback.style.color = "var(--correct)";
+                orderArea.style.borderColor = "var(--correct)";
+                incrementScore();
+            } else {
+                feedback.innerText = `Incorrect. Correct order: ${correctOrder.join(' ')}`;
+                feedback.style.color = "var(--wrong)";
+                orderArea.style.borderColor = "var(--wrong)";
+            }
+            feedback.style.display = "block";
+            checkQuizCompletion();
+        }
+
+        function incrementScore() {
+            currentScore++;
+            document.getElementById('scoreTracker').innerText = `النتيجة: ${currentScore} / ${totalQuestions}`;
+            document.getElementById('finalScoreDisplay').innerText = currentScore;
+        }
+
+        function checkQuizCompletion() {
+            const answeredCount = Object.keys(answersGiven).length;
+            if (answeredCount === totalQuestions) {
+                clearInterval(timerInterval); // Stop timer
+                document.getElementById('reportSection').style.display = 'block';
+                setTimeout(() => {
+                    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                }, 500);
+            }
+        }
+
+        function sendWhatsAppReport() {
+            const date = new Date().toLocaleDateString('en-GB'); 
+            const phoneNumber = "201200342973"; 
+            
+            let message = `*The Way To Allah Academy*\n*Arabic Lesson Assessment*\n\n`;
+            message += `👤 *Student Name:* ${studentName}\n`;
+            message += `📅 *Date:* ${date}\n`;
+            message += `📊 *Final Score:* ${currentScore} / ${totalQuestions}\n`;
+            message += `⏱️ *Time Remaining:* ${document.getElementById('timerDisplay').innerText}\n\n`;
+            
+            if(currentScore === totalQuestions) {
+                message += `🌟 Excellent performance! Mashallah!`;
+            } else if (currentScore >= 10) {
+                message += `👍 Good job! Keep practicing.`;
+            } else {
+                message += `📚 Needs more practice. Please review the lessons.`;
+            }
+
+            const encodedMessage = encodeURIComponent(message);
+            const waUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            
+            window.open(waUrl, '_blank');
+        }
+
+    </script>
+</body>
+</html>
